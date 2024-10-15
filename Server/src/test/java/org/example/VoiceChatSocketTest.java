@@ -21,12 +21,12 @@ public class VoiceChatSocketTest {
         WebSocketService webSocketService = new WebSocketService();
         webSocketService.connect();
         Thread.sleep(1000);
-        MicroRecorder recorder = new MicroRecorder();
+        MicroRecorder recorder = new MicroRecorder(null, null);
         recorder.startRecordToRemoteStreaming(webSocketService.getSession());
 
         Thread stopThread = new Thread(() -> {
             try {
-                Thread.sleep(10000);
+                Thread.sleep(5000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -72,7 +72,7 @@ public class VoiceChatSocketTest {
             }
         };
         StandardWebSocketClient client = new StandardWebSocketClient();
-        client.doHandshake(customHandler, "ws://localhost:8080/audio");
+        client.doHandshake(customHandler, "ws://localhost:8080/audio/stream");
     }
 
 }

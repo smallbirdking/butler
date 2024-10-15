@@ -28,7 +28,6 @@ public class RecordEventData extends ButlerBaseEventData {
 
         START("START"),
         STOP("STOP"),
-        STATUS("STATUS"),
         STREAM_START("STREAM_START"),
         STREAM_STOP("STREAM_STOP");
 

@@ -2,8 +2,7 @@ package org.example.event.action.audio;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.input.micro.MicroRecorder;
-import org.example.output.PipedStreamListener;
-import org.example.registery.PipedStreamRegistry;
+import org.example.output.PipedStreamHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -13,12 +12,12 @@ import org.springframework.stereotype.Component;
 public class RecordEventListener {
 
     private MicroRecorder recorder;
-    private PipedStreamRegistry pipedStreamRegistry;
+    private PipedStreamHandler handler;
 
     @Autowired
-    public RecordEventListener(MicroRecorder recorder, PipedStreamRegistry pipedStreamRegistry) {
+    public RecordEventListener(MicroRecorder recorder, PipedStreamHandler handler) {
         this.recorder = recorder;
-        this.pipedStreamRegistry = pipedStreamRegistry;
+        this.handler = handler;
     }
 
     @EventListener(value = AudioEvent.class,
@@ -45,7 +44,7 @@ public class RecordEventListener {
 
     public void startRecord() {
 //        recorder.startLocalRecordAndSaveInFile("recorded.wav");
-        recorder.startLocalRecordToPipedStream(pipedStreamRegistry.get("MIC_REC_STREAM"));
+        recorder.startLocalRecordToPipedStream();
     }
 
     public void stopRecord() {
@@ -53,12 +52,10 @@ public class RecordEventListener {
     }
 
     public void startStream() {
-        PipedStreamListener listener = new PipedStreamListener(pipedStreamRegistry.get("MIC_REC_STREAM"));
-        listener.listen();
+        handler.listen();
     }
 
     public void stopStream() {
-        PipedStreamListener listener = new PipedStreamListener(pipedStreamRegistry.get("MIC_REC_STREAM"));
-        listener.stop();
+        handler.stop();
     }
 }

@@ -21,6 +21,11 @@ public class AudioController {
         return recordService.checkMicroStatus();
     }
 
+    @GetMapping("/record/stream/status")
+    String checkStreamStatus() {
+        return recordService.checkStreamStatus();
+    }
+
     @PostMapping("/record/stream")
     String recordStream(@RequestParam String command) {
         return recordService.recordStream(command);

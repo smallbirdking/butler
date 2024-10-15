@@ -3,7 +3,6 @@ package org.example.controller.websocket;
 import lombok.extern.slf4j.Slf4j;
 import org.example.output.WavFileWriter;
 import org.example.registery.PipedStreamRegistry;
-import org.example.registery.StreamingPipe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.BinaryMessage;
@@ -15,11 +14,12 @@ import org.springframework.web.socket.handler.BinaryWebSocketHandler;
 import java.io.*;
 import java.util.Arrays;
 
+import static org.example.CommonLabel.PipedReigstryLabel.MIC_REC_STREAM;
+
 @Slf4j
 @Component
 public class AudioWebSocketHandler extends BinaryWebSocketHandler {
 
-    private static final String LABEL = "MIC_REC_STREAM";
     private ByteArrayOutputStream byteBuffer;
 
     private PipedStreamRegistry pipedStreamRegistry;
@@ -31,11 +31,13 @@ public class AudioWebSocketHandler extends BinaryWebSocketHandler {
 
     @Override
     public void handleBinaryMessage(WebSocketSession session, BinaryMessage message) {
-        log.info("Received audio message{}", Arrays.toString(message.getPayload().array()));
+//        log.info("Received audio message{}", Arrays.toString(message.getPayload().array()));
         try {
             byte[] data = message.getPayload().array();
             byteBuffer.write(Arrays.copyOf(data, data.length));
-            pipedStreamRegistry.get(LABEL).getOutputStream().write(data);
+            if (pipedStreamRegistry.get(MIC_REC_STREAM) != null) {
+                pipedStreamRegistry.get(MIC_REC_STREAM).getQueueOutputStream().write(data);
+            }
         } catch (IOException e) {
             log.error("Error writing audio message to buffer: {}", e.getMessage());
         }
@@ -58,16 +60,18 @@ public class AudioWebSocketHandler extends BinaryWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
-        System.out.println("Connection established");
+        log.info("Connection established");
         byteBuffer = new ByteArrayOutputStream();
-        pipedStreamRegistry.register(LABEL, new StreamingPipe());
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws IOException {
-        System.out.println("Connection closed");
-        WavFileWriter.writeToWavFile("output.wav", byteBuffer.toByteArray());
+        log.info("Connection closed");
+        // TODO to remove
+        WavFileWriter.writeToWavFile("output2.wav", byteBuffer.toByteArray());
         byteBuffer.close();
-        pipedStreamRegistry.get(LABEL).getOutputStream().close();
+        if (pipedStreamRegistry != null && pipedStreamRegistry.get(MIC_REC_STREAM) != null) {
+            pipedStreamRegistry.get(MIC_REC_STREAM).getQueueOutputStream().close();
+        }
     }
 }

@@ -7,6 +7,8 @@ import org.example.registery.StreamingPipe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import static org.example.CommonLabel.PipedReigstryLabel.LOCAL_MICRO;
+
 @Component
 @Getter
 public class MicroRegistryService {
@@ -18,8 +20,7 @@ public class MicroRegistryService {
     public MicroRegistryService(CommonResourceRegistry registry, MicroRecorder microRecorder,
                                  PipedStreamRegistry pipedStreamRegistry) {
         this.resourceRegistry = registry;
-        resourceRegistry.register(microRecorder.getLabel(), microRecorder);
+        resourceRegistry.register(LOCAL_MICRO, microRecorder);
         this.pipedStreamRegistry = pipedStreamRegistry;
-        this.pipedStreamRegistry.register(microRecorder.getLabel(), new StreamingPipe());
     }
 }
