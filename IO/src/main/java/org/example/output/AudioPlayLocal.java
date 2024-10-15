@@ -1,6 +1,7 @@
 package org.example.output;
 
 import lombok.extern.slf4j.Slf4j;
+import org.example.exception.AudioException;
 
 import javax.sound.sampled.*;
 import java.io.File;
@@ -20,6 +21,7 @@ public class AudioPlayLocal {
             clip.drain();
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
             log.error("Error playing audio", e);
+            throw new AudioException(AudioPlayLocal.class, "Error playing audio", e);
         }
     }
 }

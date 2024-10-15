@@ -1,6 +1,7 @@
 package org.example.controller.websocket;
 
 import lombok.extern.slf4j.Slf4j;
+import org.example.exception.AudioException;
 import org.example.output.WavFileWriter;
 import org.example.registery.PipedStreamRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,7 @@ public class AudioWebSocketHandler extends BinaryWebSocketHandler {
             }
         } catch (IOException e) {
             log.error("Error writing audio message to buffer: {}", e.getMessage());
+            throw new AudioException(AudioWebSocketHandler.class, "Error writing audio message to buffer", e);
         }
     }
 
@@ -54,7 +56,7 @@ public class AudioWebSocketHandler extends BinaryWebSocketHandler {
             session.sendMessage(new TextMessage("from client : "+payload));
         } catch (IOException e) {
             log.error("Error sending message to client: {}", e.getMessage());
-            throw new RuntimeException(e);
+            throw new AudioException(AudioWebSocketHandler.class, "Error sending message to client", e);
         }
     }
 

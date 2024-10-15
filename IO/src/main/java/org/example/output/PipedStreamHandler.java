@@ -2,6 +2,7 @@ package org.example.output;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.QueueInputStream;
+import org.example.exception.AudioException;
 import org.example.input.micro.MicroRecorder;
 import org.example.registery.*;
 import org.springframework.stereotype.Component;
@@ -54,6 +55,7 @@ public class PipedStreamHandler {
                 log.info("listener stopped");
             } catch (IOException e) {
                 log.error("Error listening to stream", e);
+                throw new AudioException(PipedStreamHandler.class, "Error listening to stream", e);
             }
         });
         thread.start();
@@ -90,6 +92,7 @@ public class PipedStreamHandler {
             log.info("Stream stopped");
         } catch (IOException | InterruptedException e) {
             log.error("Error stopping stream", e);
+            throw new AudioException(PipedStreamHandler.class, "Error stopping stream", e);
         }
     }
 }

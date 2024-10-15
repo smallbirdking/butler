@@ -1,6 +1,7 @@
 package org.example.output;
 
 import lombok.extern.slf4j.Slf4j;
+import org.example.exception.AudioException;
 import org.example.util.AudioUtil;
 
 import javax.sound.sampled.*;
@@ -19,6 +20,7 @@ public class WavFileWriter {
             log.info("WAV file written successfully.");
         } catch (IOException e) {
             log.error("Error writing WAV file: " + e.getMessage());
+            throw new AudioException(WavFileWriter.class, "Error writing WAV file", e);
         }
     }
 

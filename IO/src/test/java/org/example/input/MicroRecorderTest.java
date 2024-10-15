@@ -1,5 +1,6 @@
 package org.example.input;
 
+import org.example.exception.AudioException;
 import org.example.input.micro.MicroRecorder;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +15,7 @@ public class MicroRecorderTest {
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                throw new AudioException(MicroRecorderTest.class, "Error stopping recording", e);
             }
             recorder.stopRecording();
         });

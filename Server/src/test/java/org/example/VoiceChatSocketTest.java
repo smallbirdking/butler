@@ -1,6 +1,7 @@
 package org.example;
 
 import lombok.extern.slf4j.Slf4j;
+import org.example.exception.AudioException;
 import org.example.input.micro.MicroRecorder;
 import org.example.input.WebSocketService;
 import org.junit.jupiter.api.Test;
@@ -28,13 +29,13 @@ public class VoiceChatSocketTest {
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                throw new AudioException(VoiceChatSocketTest.class, "Error stopping recording", e);
             }
             try {
                 recorder.stopRecording();
                 webSocketService.disconnect();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new AudioException(VoiceChatSocketTest.class, "Error stopping recording", e);
             }
         });
         stopThread.start();

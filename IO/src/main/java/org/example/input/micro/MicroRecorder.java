@@ -1,6 +1,7 @@
 package org.example.input.micro;
 
 import lombok.extern.slf4j.Slf4j;
+import org.example.exception.AudioException;
 import org.example.output.PipedStreamHandler;
 import org.example.registery.*;
 import org.example.util.AudioUtil;
@@ -65,6 +66,7 @@ public class MicroRecorder implements IResourceRegistry {
                 recordingThread.join();
             } catch (InterruptedException e) {
                 log.error("Error stopping recording", e);
+                throw new AudioException(MicroRecorder.class, "Error stopping recording", e);
             }
         }
     }
@@ -93,6 +95,7 @@ public class MicroRecorder implements IResourceRegistry {
             log.info("Recording started...");
         } catch (LineUnavailableException e) {
             log.error("Record failure : ", e);
+            throw new AudioException(MicroRecorder.class, "Record failure", e);
         }
     }
 
@@ -104,6 +107,7 @@ public class MicroRecorder implements IResourceRegistry {
                 AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, outputFile);
             } catch (IOException e) {
                 log.error("Error recording audio", e);
+                throw new AudioException(MicroRecorder.class, "Error recording audio", e);
             }
         };
     }
@@ -119,6 +123,7 @@ public class MicroRecorder implements IResourceRegistry {
                             pipe.getQueueOutputStream().write(buffer);
                         } catch (IOException e) {
                             log.error("Error writing to pipe", e);
+                            throw new AudioException(MicroRecorder.class, "Error writing to pipe", e);
                         }
                     });
                 }
@@ -136,7 +141,8 @@ public class MicroRecorder implements IResourceRegistry {
                         session.sendMessage(new BinaryMessage(buffer));
                     }
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    log.error("Error sending audio message", e);
+                    throw new AudioException(MicroRecorder.class, "Error sending audio message", e);
                 }
             }
         };
